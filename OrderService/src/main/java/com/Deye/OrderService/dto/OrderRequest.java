@@ -4,16 +4,17 @@ import java.math.BigDecimal;
 
 public class OrderRequest {
 
+    private Integer userId;
     private String productName;
     private Integer quantity;
     private BigDecimal price;
 
-    public String getProductName() {
-        return productName;
+    public BigDecimal getPrice() {
+        return price;
     }
 
-    public void setProductName(String productName) {
-        this.productName = productName;
+    public void setPrice(BigDecimal price) {
+        this.price = price;
     }
 
     public Integer getQuantity() {
@@ -24,11 +25,19 @@ public class OrderRequest {
         this.quantity = quantity;
     }
 
-    public BigDecimal getPrice() {
-        return price;
+    public String getProductName() {
+        return productName;
     }
 
-    public void setPrice(BigDecimal price) {
-        this.price = price;
+    public void setProductName(String productName) {
+        this.productName = productName;
+    }
+
+    public Integer getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Integer userId) {
+        this.userId = userId;
     }
 }

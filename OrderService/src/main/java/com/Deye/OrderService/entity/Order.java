@@ -10,7 +10,9 @@ public class Order {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Integer orderId;
+
+    private Integer userId;
 
     private String productName;
 
@@ -18,12 +20,20 @@ public class Order {
 
     private BigDecimal price;
 
-    public Integer getId() {
-        return id;
+    public Integer getOrderId() {
+        return orderId;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public void setOrderId(Integer orderId) {
+        this.orderId = orderId;
+    }
+
+    public Integer getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Integer userId) {
+        this.userId = userId;
     }
 
     public String getProductName() {

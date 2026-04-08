@@ -4,12 +4,14 @@ import java.math.BigDecimal;
 
 public class OrderCreatedEvent {
     private Integer orderId;
+    private Integer userId;
     private String productName;
     private Integer quantity;
     private BigDecimal prices;
 
-    public OrderCreatedEvent(Integer orderId, String productName, Integer quantity, BigDecimal prices) {
+    public OrderCreatedEvent(Integer orderId, Integer userId, String productName, Integer quantity, BigDecimal prices) {
         this.orderId = orderId;
+        this.userId = userId;
         this.productName = productName;
         this.quantity = quantity;
         this.prices = prices;
@@ -21,6 +23,14 @@ public class OrderCreatedEvent {
 
     public void setOrderId(Integer orderId) {
         this.orderId = orderId;
+    }
+
+    public Integer getUserId() {
+        return userId;
+    }
+
+    public void setUserid(Integer userId) {
+        this.userId = userId;
     }
 
     public String getProductName() {

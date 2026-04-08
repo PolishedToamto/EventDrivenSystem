@@ -1,15 +1,34 @@
 package com.Deye.UserService.listener;
 
 import com.Deye.UserService.event.OrderCreatedEvent;
+import com.Deye.UserService.producer.UserEventProducer;
+import com.Deye.UserService.service.UserService;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
 @Service
 public class UserEventListener {
+    private UserService userService;
+    private UserEventProducer userEventProducer;
 
-    @KafkaListener(topics = "order-Created-event")
+    public UserEventListener(UserService userService, UserEventProducer userEventProducer) {
+        this.userService = userService;
+        this.userEventProducer = userEventProducer;
+    }
+
+    @KafkaListener(topics = "order.event")
     public void handleOrderCreated(OrderCreatedEvent event) {
         System.out.println("UserService received: " + event.getOrderId());
-        // later: enrichment, audit, user profiling
+
+        if(!userService.isValidUser(event.getUserId())){
+            System.out.println("userId is not valid");
+            userEventProducer.sendUserEvent(event, false);
+            return;
+        }
+
+        System.out.println("user id is valid: " + event.getUserId());
+
+        userEventProducer.sendUserEvent(event, true);
+        return;
     }
 }

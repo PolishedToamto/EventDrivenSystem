@@ -24,6 +24,7 @@ public class OrderController {
         if(orderRequest.getQuantity() <= 0) throw new RuntimeException("Quantity can't be less than 1");
 
         Order order = new Order();
+        order.setUserId(orderRequest.getUserId());
         order.setPrice(orderRequest.getPrice());
         order.setQuantity(orderRequest.getQuantity());
         order.setProductName(orderRequest.getProductName());

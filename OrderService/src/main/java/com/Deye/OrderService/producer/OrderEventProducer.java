@@ -14,7 +14,8 @@ public class OrderEventProducer {
 
     public void sendOrderCreatedEvent(OrderCreatedEvent event){
 
-        kafkaTemplate.send("order-Created-event", event);
+        kafkaTemplate.send("order.event", event);
         System.out.println("order sent with id " + event.getOrderId());
+        System.out.println("order sent with user id " + event.getUserId());
     }
 }
