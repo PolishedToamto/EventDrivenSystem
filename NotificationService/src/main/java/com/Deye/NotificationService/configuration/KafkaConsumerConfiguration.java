@@ -1,6 +1,7 @@
 package com.Deye.NotificationService.configuration;
 
 import com.Deye.NotificationService.event.UserValidatedEvent;
+import org.apache.kafka.common.TopicPartition;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
@@ -25,7 +26,7 @@ public class KafkaConsumerConfiguration {
 
         DefaultErrorHandler errorHandler =
                 new DefaultErrorHandler(
-                        new DeadLetterPublishingRecoverer(kafkaTemplate),
+                        new DeadLetterPublishingRecoverer(kafkaTemplate, (record, e) -> new TopicPartition("user.event.dlt", record.partition())),
                         new FixedBackOff(2000L, 3)
                 );
 

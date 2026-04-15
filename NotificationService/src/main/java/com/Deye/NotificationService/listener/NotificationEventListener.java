@@ -1,6 +1,7 @@
 package com.Deye.NotificationService.listener;
 
 import com.Deye.NotificationService.event.UserValidatedEvent;
+import com.Deye.NotificationService.service.EmailService;
 import com.Deye.NotificationService.service.NotificationService;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.slf4j.Logger;
@@ -20,14 +21,17 @@ import org.springframework.util.backoff.FixedBackOff;
 @Service
 public class NotificationEventListener {
     NotificationService notificationService;
+    EmailService emailService;
     final Logger logger = LoggerFactory.getLogger(NotificationEventListener.class);
 
-    public NotificationEventListener(NotificationService notificationService) {
+    public NotificationEventListener(NotificationService notificationService, EmailService emailService) {
         this.notificationService = notificationService;
+        this.emailService = emailService;
     }
 
     @KafkaListener(topics = "user.event")
     public void sendNotification(UserValidatedEvent event) {
+        emailService.sendEmail("dleipersonal@gmail.com", "Test Email", "Hello this is a test email!");
         notificationService.sendNotification(event.getUserId(), "hello world");
     }
 }
