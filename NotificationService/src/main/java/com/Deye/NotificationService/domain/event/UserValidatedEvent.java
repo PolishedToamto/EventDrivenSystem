@@ -1,4 +1,4 @@
-package com.Deye.NotificationService.event;
+package com.Deye.NotificationService.domain.event;
 
 public class UserValidatedEvent {
     Integer orderId;

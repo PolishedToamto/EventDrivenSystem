@@ -1,4 +1,4 @@
-package com.Deye.NotificationService.listener;
+package com.Deye.NotificationService.infrastructure.kafka.listener;
 
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;

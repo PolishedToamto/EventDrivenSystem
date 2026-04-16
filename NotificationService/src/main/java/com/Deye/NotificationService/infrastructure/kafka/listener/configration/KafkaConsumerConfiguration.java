@@ -1,6 +1,6 @@
-package com.Deye.NotificationService.configuration;
+package com.Deye.NotificationService.infrastructure.kafka.listener.configration;
 
-import com.Deye.NotificationService.event.UserValidatedEvent;
+import com.Deye.NotificationService.domain.event.UserValidatedEvent;
 import org.apache.kafka.common.TopicPartition;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,13 +24,9 @@ public class KafkaConsumerConfiguration {
 
         factory.setConsumerFactory(consumerFactory);
 
-        DeadLetterPublishingRecoverer recoverer = new DeadLetterPublishingRecoverer(kafkaTemplate,
-                (record, ex) -> new TopicPartition("user.event.dlt", record.partition()));
-        recoverer.setLogRecoveryRecord(true);
-
-
         DefaultErrorHandler errorHandler =
-                new DefaultErrorHandler(recoverer,
+                new DefaultErrorHandler(
+                        new DeadLetterPublishingRecoverer(kafkaTemplate, (record, e) -> new TopicPartition("user.event.dlt", record.partition())),
                         new FixedBackOff(2000L, 3)
                 );
 

@@ -1,24 +1,25 @@
-package com.Deye.NotificationService.service;
+package com.Deye.NotificationService.infrastructure.email;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import com.Deye.NotificationService.application.service.EmailSender;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
-@Service
-public class EmailService {
+@Component
+public class SmtpEmailSender implements EmailSender {
+
     private final JavaMailSender mailSender;
 
-    public EmailService(JavaMailSender mailSender) {
+    public SmtpEmailSender(JavaMailSender mailSender) {
         this.mailSender = mailSender;
     }
 
-    public void sendEmail(String to, String subject, String body) {
+    @Override
+    public void send(String to, String subject, String body) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(to);
         message.setSubject(subject);
         message.setText(body);
-        message.setFrom("test@local");
 
         mailSender.send(message);
     }

@@ -16,12 +16,10 @@ spring:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
       spring.json.add.type.headers: false
-
   mail:
     host: localhost
-    port: 1025
-    username: #dylemailtestsender@gmail.com
-    password: #EmailSender
+    port: 3025
+    #don't add username and password as it will try to autenticate which override what set below
     properties:
       mail:
         smtp:

@@ -1,22 +1,12 @@
-package com.Deye.NotificationService.listener;
+package com.Deye.NotificationService.infrastructure.kafka.listener;
 
-import com.Deye.NotificationService.event.UserValidatedEvent;
-import com.Deye.NotificationService.service.EmailService;
-import com.Deye.NotificationService.service.NotificationService;
-import org.apache.kafka.clients.consumer.ConsumerRecord;
+import com.Deye.NotificationService.domain.event.UserValidatedEvent;
+import com.Deye.NotificationService.application.service.EmailService;
+import com.Deye.NotificationService.application.service.NotificationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.Bean;
 import org.springframework.kafka.annotation.KafkaListener;
-import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
-import org.springframework.kafka.config.KafkaListenerContainerFactory;
-import org.springframework.kafka.core.ConsumerFactory;
-import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.kafka.listener.ConcurrentMessageListenerContainer;
-import org.springframework.kafka.listener.DeadLetterPublishingRecoverer;
-import org.springframework.kafka.listener.DefaultErrorHandler;
 import org.springframework.stereotype.Service;
-import org.springframework.util.backoff.FixedBackOff;
 
 @Service
 public class NotificationEventListener {
