@@ -14,7 +14,7 @@ public class UserEventProducer {
     }
 
     public void sendUserEvent(OrderCreatedEvent orderCreatedEvent, boolean isValid) {
-        UserValidatedEvent userValidatedEvent = new UserValidatedEvent(orderCreatedEvent.getOrderId(), orderCreatedEvent.getUserId(), isValid);
+        UserValidatedEvent userValidatedEvent = new UserValidatedEvent(orderCreatedEvent.getOrderId(), orderCreatedEvent.getUserId(), orderCreatedEvent.getEmail(), isValid);
         kafkaTemplate.send("user.event", userValidatedEvent);
     }
 }

@@ -8,6 +8,19 @@ import java.math.BigDecimal;
 @Table(name="orders")
 public class Order {
 
+    public Order(){
+
+    }
+
+    public Order(Integer orderId, Integer userId, String productName, Integer quantity, BigDecimal price, String email) {
+        this.orderId = orderId;
+        this.userId = userId;
+        this.productName = productName;
+        this.quantity = quantity;
+        this.price = price;
+        this.email = email;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer orderId;
@@ -19,6 +32,8 @@ public class Order {
     private Integer quantity;
 
     private BigDecimal price;
+
+    private String email;
 
     public Integer getOrderId() {
         return orderId;
@@ -58,5 +73,13 @@ public class Order {
 
     public void setPrice(BigDecimal price) {
         this.price = price;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 }

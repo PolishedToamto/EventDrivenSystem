@@ -12,4 +12,8 @@ public class UserService {
     }
 
 
+    public boolean isValidEmail(String email) {
+        if(email == null || email.equalsIgnoreCase("")) return false;
+        return true;
+    }
 }

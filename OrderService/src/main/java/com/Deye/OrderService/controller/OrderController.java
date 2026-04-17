@@ -28,7 +28,7 @@ public class OrderController {
         order.setPrice(orderRequest.getPrice());
         order.setQuantity(orderRequest.getQuantity());
         order.setProductName(orderRequest.getProductName());
-
+        order.setEmail(orderRequest.getEmail());
         return orderService.createOrder(order);
     }
 
