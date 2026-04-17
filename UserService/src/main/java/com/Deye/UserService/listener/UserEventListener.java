@@ -20,13 +20,14 @@ public class UserEventListener {
     public void handleOrderCreated(OrderCreatedEvent event) {
         System.out.println("UserService received: " + event.getOrderId());
 
-        if(!userService.isValidUser(event.getUserId())){
-            System.out.println("userId is not valid");
+        if(!userService.isValidUser(event.getUserId())
+            || !userService.isValidEmail(event.getEmail())){
+            System.out.println("user event is not valid");
             userEventProducer.sendUserEvent(event, false);
             return;
         }
 
-        System.out.println("user id is valid: " + event.getUserId());
+        System.out.println("user is valid: " + event.getUserId());
 
         userEventProducer.sendUserEvent(event, true);
         return;

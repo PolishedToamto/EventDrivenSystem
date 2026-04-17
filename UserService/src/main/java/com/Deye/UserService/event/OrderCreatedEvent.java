@@ -8,6 +8,7 @@ public class OrderCreatedEvent {
     private String productName;
     private Integer quantity;
     private BigDecimal prices;
+    private String email;
 
     public OrderCreatedEvent() {}
 
@@ -57,5 +58,13 @@ public class OrderCreatedEvent {
 
     public void setPrices(BigDecimal prices) {
         this.prices = prices;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 }

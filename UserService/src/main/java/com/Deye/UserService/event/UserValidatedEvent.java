@@ -3,15 +3,17 @@ package com.Deye.UserService.event;
 public class UserValidatedEvent {
     Integer orderId;
     Integer userId;
+    String email;
     Boolean isValid;
 
     public UserValidatedEvent() {
     }
 
-    public UserValidatedEvent(Integer orderId, Integer userId, Boolean isValid) {
+    public UserValidatedEvent(Integer orderId, Integer userId, String email,Boolean isValid) {
         this.orderId = orderId;
         this.userId = userId;
         this.isValid = isValid;
+        this.email = email;
     }
 
     public Integer getOrderId() {
@@ -36,5 +38,13 @@ public class UserValidatedEvent {
 
     public void setValid(Boolean valid) {
         isValid = valid;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 }
