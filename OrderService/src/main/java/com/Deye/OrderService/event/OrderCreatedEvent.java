@@ -8,13 +8,15 @@ public class OrderCreatedEvent {
     private String productName;
     private Integer quantity;
     private BigDecimal prices;
+    private String email;
 
-    public OrderCreatedEvent(Integer orderId, Integer userId, String productName, Integer quantity, BigDecimal prices) {
+    public OrderCreatedEvent(Integer orderId, Integer userId, String productName, Integer quantity, BigDecimal prices, String email) {
         this.orderId = orderId;
         this.userId = userId;
         this.productName = productName;
         this.quantity = quantity;
         this.prices = prices;
+        this.email = email;
     }
 
     public Integer getOrderId() {
@@ -55,5 +57,13 @@ public class OrderCreatedEvent {
 
     public void setPrices(BigDecimal prices) {
         this.prices = prices;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 }

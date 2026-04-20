@@ -31,7 +31,9 @@ public class OrderControllerTest {
 
     @Test
     public void getOrderById() throws Exception {
-        when(orderService.getOrderById(1)).thenReturn(Optional.of(new Order(1, 0, "", 0, BigDecimal.ZERO, "")));
+        when(orderService.getOrderById(1))
+                .thenReturn(Optional.of(new Order(1, 0, "", 0, BigDecimal.ZERO, "")));
+
         mockMvc.perform(get("/orders/{id}", 1)).andExpect(status().isOk())
                 .andExpect(jsonPath("$.orderId").value(1));
 
@@ -41,7 +43,8 @@ public class OrderControllerTest {
     public void createOrder() throws Exception {
         Order testOrder = new Order(1, 0, "testProduct", 1, new BigDecimal(15.99), "test@gmail.com");
         //when -> thenReturn only return the specified object when mockito see what was invoke
-        when(orderService.createOrder(argThat(order -> order.getUserId() == 0 && order.getEmail().equalsIgnoreCase("test@gmail.com")))).thenReturn(testOrder);
+        when(orderService.createOrder(argThat(order -> order.getUserId() == 0 && order.getEmail().equalsIgnoreCase("test@gmail.com"))))
+                .thenReturn(testOrder);
 
         mockMvc.perform(post("/orders")
                 .contentType(MediaType.APPLICATION_JSON)
