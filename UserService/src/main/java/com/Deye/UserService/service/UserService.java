@@ -6,14 +6,18 @@ import org.springframework.stereotype.Service;
 public class UserService {
     public boolean isValidUser(Integer userId){
         if(userId == null) return false;
-        if(userId == 0) return true;
+        if(userId >= 0) return true;
 
         return false;
     }
 
 
     public boolean isValidEmail(String email) {
-        if(email == null || email.equalsIgnoreCase("")) return false;
+        if(email == null
+                || email.equalsIgnoreCase("")
+                || !email.contains("@")){
+            return false;
+        }
         return true;
     }
 }

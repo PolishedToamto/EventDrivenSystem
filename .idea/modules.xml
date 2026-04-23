@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/EventDrivenSystem.iml" filepath="$PROJECT_DIR$/.idea/EventDrivenSystem.iml" />
+      <module fileurl="file://$PROJECT_DIR$/OrderService/OrderService.iml" filepath="$PROJECT_DIR$/OrderService/OrderService.iml" />
     </modules>
   </component>
 </project>

@@ -10,6 +10,8 @@ public class OrderCreatedEvent {
     private BigDecimal prices;
     private String email;
 
+    public OrderCreatedEvent(){}
+
     public OrderCreatedEvent(Integer orderId, Integer userId, String productName, Integer quantity, BigDecimal prices, String email) {
         this.orderId = orderId;
         this.userId = userId;

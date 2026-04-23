@@ -11,7 +11,7 @@ spring:
       properties:
         spring.json.trusted.packages: "*"
         spring.json.use.type.headers: false
-        spring.json.value.default.type: com.Deye.UserService.event.OrderCreatedEvent
+        spring.json.value.default.type: event.com.deye.userService.OrderCreatedEvent
         spring.json.add.type.headers: false
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
