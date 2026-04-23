@@ -10,8 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.resttestclient.TestRestTemplate;
 import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureTestRestTemplate;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.KafkaContainer;
@@ -27,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureTestRestTemplate
 @Testcontainers
+@ActiveProfiles("test")
 public class IntegrationTest {
 
     @Container
@@ -46,30 +49,21 @@ public class IntegrationTest {
     @Autowired
     private TestKafkaListener kafkaListener;
 
+    @Autowired
+    Environment env;
+
+    @Test
+    void debug() {
+        //testing if application-test yml is loaded
+        System.out.println(env.getProperty("test.marker"));
+    }
+
     @DynamicPropertySource
     static void properties(DynamicPropertyRegistry registry) {
         registry.add("spring.kafka.bootstrap-servers", kafka::getBootstrapServers);
         registry.add("spring.datasource.url", postgres::getJdbcUrl);
         registry.add("spring.datasource.username", postgres::getUsername);
         registry.add("spring.datasource.password", postgres::getPassword);
-
-        // ✅ Producer
-        registry.add("spring.kafka.producer.key-serializer",
-                () -> "org.apache.kafka.common.serialization.StringSerializer");
-
-        registry.add("spring.kafka.producer.value-serializer",
-                () -> "org.springframework.kafka.support.serializer.JsonSerializer");
-
-        // ✅ Consumer
-        registry.add("spring.kafka.consumer.key-deserializer",
-                () -> "org.apache.kafka.common.serialization.StringDeserializer");
-
-        registry.add("spring.kafka.consumer.value-deserializer",
-                () -> "org.springframework.kafka.support.serializer.JsonDeserializer");
-
-        // ✅ Required for JSON deserialization
-        registry.add("spring.kafka.consumer.properties.spring.json.trusted.packages",
-                () -> "*");
     }
 
     @Test
@@ -78,7 +72,7 @@ public class IntegrationTest {
         orderRequest.setUserId(0);
         orderRequest.setProductName("testProduct");
         orderRequest.setQuantity(1);
-        orderRequest.setPrice(new BigDecimal(15.99));
+        orderRequest.setPrice(new BigDecimal("15.99"));
         orderRequest.setEmail("test@gmail.com");
 
         ResponseEntity<com.Deye.OrderService.entity.Order> response = restTemplate.postForEntity("/orders", orderRequest, Order.class);
@@ -107,7 +101,7 @@ public class IntegrationTest {
         orderRequest.setUserId(0);
         orderRequest.setProductName("testProduct");
         orderRequest.setQuantity(1);
-        orderRequest.setPrice(new BigDecimal(15.99));
+        orderRequest.setPrice(new BigDecimal("15.99"));
         orderRequest.setEmail("test@gmail.com");
 
         ResponseEntity<Order> response1 = restTemplate.postForEntity("/orders", orderRequest, Order.class);
