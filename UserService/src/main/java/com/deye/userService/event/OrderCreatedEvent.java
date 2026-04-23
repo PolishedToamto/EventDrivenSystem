@@ -1,4 +1,4 @@
-package com.Deye.UserService.event;
+package com.deye.userService.event;
 
 import java.math.BigDecimal;
 

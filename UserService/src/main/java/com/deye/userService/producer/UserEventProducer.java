@@ -1,7 +1,7 @@
-package com.Deye.UserService.producer;
+package com.deye.userService.producer;
 
-import com.Deye.UserService.event.OrderCreatedEvent;
-import com.Deye.UserService.event.UserValidatedEvent;
+import com.deye.userService.event.OrderCreatedEvent;
+import com.deye.userService.event.UserValidatedEvent;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 

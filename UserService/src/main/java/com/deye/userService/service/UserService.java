@@ -1,4 +1,4 @@
-package com.Deye.UserService.service;
+package com.deye.userService.service;
 
 import org.springframework.stereotype.Service;
 

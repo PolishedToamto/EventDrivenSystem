@@ -1,11 +1,10 @@
 package com.deye.userService.unitTest;
 
-import com.Deye.UserService.service.UserService;
+import com.deye.userService.service.UserService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
