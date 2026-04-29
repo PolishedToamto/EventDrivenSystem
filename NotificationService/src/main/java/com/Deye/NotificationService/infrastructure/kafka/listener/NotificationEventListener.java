@@ -5,12 +5,14 @@ import com.Deye.NotificationService.application.service.EmailService;
 import com.Deye.NotificationService.application.service.NotificationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
 @Service
 public class NotificationEventListener {
     NotificationService notificationService;
+
     EmailService emailService;
     final Logger logger = LoggerFactory.getLogger(NotificationEventListener.class);
 

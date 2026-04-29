@@ -17,11 +17,9 @@ spring:
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
       spring.json.add.type.headers: false
 
-  mail:
-    host: email-smtp.us-east-1.amazonaws.com
-    port: 587
-    username: SES_SMTP_USERNAME
-    password: SES_SMTP_PASSWORD
-    properties:
-      mail.smtp.auth: true
-      mail.smtp.starttls.enable: true
+email:
+  from: dleipersonal@gmail.com
+
+logging:
+  level:
+    software.amazon.awssdk.auth: DEBUG
