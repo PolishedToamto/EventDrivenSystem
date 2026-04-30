@@ -9,7 +9,7 @@ public class NotificationService {
     private final Logger logger = LoggerFactory.getLogger(NotificationService.class);
 
     public void sendNotification(Integer userId, String message) {
-        logger.info("send notification");
+        logger.info("Entering NotificationService.sendNotification()");
 
         try{
             Thread.sleep(500);
@@ -17,5 +17,7 @@ public class NotificationService {
         catch(InterruptedException e){
 
         }
+
+        logger.info("Exiting NotificationService.sendNotification()");
     }
 }
