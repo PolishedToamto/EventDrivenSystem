@@ -2,6 +2,8 @@ package com.deye.userService.intergrationTest;
 
 
 import com.deye.userService.event.UserValidatedEvent;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.apache.kafka.clients.producer.ProducerRecord;
 import org.junit.Assert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -16,6 +18,10 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
+
+import java.util.concurrent.TimeUnit;
+
+import static org.awaitility.Awaitility.await;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Testcontainers
@@ -55,17 +61,26 @@ public class IntegrationTest {
     public void integrationTest() throws InterruptedException {
         startEventProducerTest.sendValidEvent();
 
-        UserValidatedEvent validEvent = endEventListenerTest.getUserValidatedEvent();
+        ConsumerRecord<String, UserValidatedEvent> validEvent = endEventListenerTest.getUserValidatedEvent();
 
-        Assert.assertNotNull(validEvent);
-        Assertions.assertEquals("test@gmail.com", validEvent.getEmail());
-        Assertions.assertEquals(true, validEvent.getValid());
+        await().atMost(3, TimeUnit.SECONDS).untilAsserted(
+                        ()->Assert.assertNotNull(validEvent)
+                );
+
+
+        Assertions.assertEquals("test@gmail.com", validEvent.value().getEmail());
+        Assertions.assertEquals(true, validEvent.value().getValid());
+        Assert.assertNotNull(validEvent.headers().lastHeader("X-Correlation-Id"));
 
         startEventProducerTest.sendInValidEvent();
 
-        UserValidatedEvent invalidEvent = endEventListenerTest.getUserValidatedEvent();
+        ConsumerRecord<String, UserValidatedEvent> invalidEvent = endEventListenerTest.getUserValidatedEvent();
 
-        Assert.assertNotNull(invalidEvent);
-        Assertions.assertEquals(false, invalidEvent.getValid());
+        await().atMost(3, TimeUnit.SECONDS).untilAsserted(
+                ()->Assert.assertNotNull(invalidEvent)
+        );
+
+        Assertions.assertEquals(false, invalidEvent.value().getValid());
+        Assert.assertNotNull(validEvent.headers().lastHeader("X-Correlation-Id"));
     }
 }

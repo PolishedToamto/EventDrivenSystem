@@ -3,10 +3,6 @@ test:
 spring:
   application:
     name: OrderService
-
-  datasource:
-    url: jdbc:tc:postgresql:15:///order_db
-
   jpa:
     hibernate:
       ddl-auto: create-drop
@@ -16,7 +12,6 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
 
   kafka:
-    bootstrap-servers: ${spring.embedded.kafka.brokers}
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer

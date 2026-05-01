@@ -4,11 +4,15 @@ import com.Deye.NotificationService.domain.event.UserValidatedEvent;
 import com.Deye.NotificationService.infrastructure.kafka.listener.NotificationEventListener;
 import com.Deye.NotificationService.application.service.EmailService;
 import com.Deye.NotificationService.application.service.NotificationService;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.nio.charset.StandardCharsets;
+import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
@@ -28,7 +32,13 @@ public class NotificationEventListenerTest {
     public void testOnEventListening() {
         UserValidatedEvent userValidatedEvent = new UserValidatedEvent(0, 0, true);
 
-        notificationEventListener.sendNotification(userValidatedEvent);
+        ConsumerRecord<String, UserValidatedEvent> record = new ConsumerRecord<>("user.event",0,0,"0",userValidatedEvent);
+
+        String correlationId = UUID.randomUUID().toString();
+
+        record.headers().add("X-Correlation-Id", correlationId.getBytes(StandardCharsets.UTF_8));
+
+        notificationEventListener.sendNotification(record);
 
         verify(emailService).sendEmail(
                 eq("dleipersonal@gmail.com"),

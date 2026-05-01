@@ -10,9 +10,9 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class OrderEventProducer {
-    private final KafkaTemplate<String, Object> kafkaTemplate;
+    private final KafkaTemplate<String, OrderCreatedEvent> kafkaTemplate;
     private final Logger logger = LoggerFactory.getLogger(OrderEventProducer.class);
-    public OrderEventProducer(KafkaTemplate<String, Object> kafkaTemplate) {
+    public OrderEventProducer(KafkaTemplate<String, OrderCreatedEvent> kafkaTemplate) {
         this.kafkaTemplate = kafkaTemplate;
     }
 
@@ -20,7 +20,7 @@ public class OrderEventProducer {
         logger.info("Entering sendOrderCreatedEvent()");
         String correlationId = MDC.get("correlationId");
 
-        ProducerRecord<String, Object> record =
+        ProducerRecord<String, OrderCreatedEvent> record =
                 new ProducerRecord<>("order.event", event);
 
         if (correlationId != null) {

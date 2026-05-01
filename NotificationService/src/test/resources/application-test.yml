@@ -2,7 +2,6 @@ server:
   port: 8081
 spring:
   kafka:
-    bootstrap-servers: localhost:9092
     consumer:
       group-id: notification-service
       auto-offset-reset: earliest
@@ -15,7 +14,9 @@ spring:
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
-      spring.json.add.type.headers: false
+
+      properties:
+        spring.json.add.type.headers: false
   mail:
     host: localhost
     port: 3025

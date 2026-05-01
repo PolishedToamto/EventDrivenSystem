@@ -4,6 +4,7 @@ import com.Deye.OrderService.dto.OrderRequest;
 import com.Deye.OrderService.entity.Order;
 import com.Deye.OrderService.event.OrderCreatedEvent;
 import com.Deye.OrderService.repository.OrderRepository;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -91,10 +92,12 @@ public class IntegrationTest {
         assertTrue(new BigDecimal("15.99").compareTo(saved.getPrice()) == 0);
         assertEquals(response.getBody().getEmail(), saved.getEmail());
 
-        OrderCreatedEvent orderCreatedEvent = kafkaListener.waitForMessage();
+        ConsumerRecord<String, OrderCreatedEvent> orderCreatedEvent = kafkaListener.waitForMessage();
         assertNotNull(orderCreatedEvent);
 
-        assertEquals("testProduct", orderCreatedEvent.getProductName());
+        assertEquals("testProduct", orderCreatedEvent.value().getProductName());
+
+        assertNotNull(orderCreatedEvent.headers().lastHeader("X-Correlation-Id"));
     }
 
     @Test

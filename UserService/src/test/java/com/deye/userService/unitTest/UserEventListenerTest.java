@@ -4,6 +4,7 @@ import com.deye.userService.event.OrderCreatedEvent;
 import com.deye.userService.listener.UserEventListener;
 import com.deye.userService.producer.UserEventProducer;
 import com.deye.userService.service.UserService;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -11,6 +12,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
+import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.verify;
@@ -40,7 +43,10 @@ public class UserEventListenerTest {
         when(userService.isValidUser(eq(0))).thenReturn(true);
         when(userService.isValidEmail(argThat(email->email.contains("@")))).thenReturn(true);
 
-        userEventListener.handleOrderCreated(createdEvent);
+        ConsumerRecord<String, OrderCreatedEvent> record = new ConsumerRecord<>("order.event", 0, 0, "0", createdEvent);
+        record.headers().add("X-Correlation-Id", UUID.randomUUID().toString().getBytes(StandardCharsets.UTF_8));
+
+        userEventListener.handleOrderCreated(record);
 
         verify(userService).isValidUser(eq(0));
         verify(userService).isValidEmail(eq(createdEvent.getEmail()));

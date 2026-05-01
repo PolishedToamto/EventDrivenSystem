@@ -1,17 +1,21 @@
 package com.deye.userService.intergrationTest;
 
 import com.deye.userService.event.OrderCreatedEvent;
+import org.apache.kafka.clients.producer.ProducerRecord;
+import org.junit.jupiter.api.Order;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
+import java.util.UUID;
 
 @Component
 public class kafkaEventProducerTest {
 
-    private final KafkaTemplate<String, Object> kafkaTemplate;
+    private final KafkaTemplate<String, OrderCreatedEvent> kafkaTemplate;
 
-    public kafkaEventProducerTest(KafkaTemplate<String, Object> kafkaTemplate) {
+    public kafkaEventProducerTest(KafkaTemplate<String, OrderCreatedEvent> kafkaTemplate) {
         this.kafkaTemplate = kafkaTemplate;
     }
 
@@ -24,7 +28,10 @@ public class kafkaEventProducerTest {
         orderCreatedEvent.setQuantity(1);
         orderCreatedEvent.setEmail("test@gmail.com");
 
-        kafkaTemplate.send("order.event", orderCreatedEvent);
+        ProducerRecord<String, OrderCreatedEvent> record = new ProducerRecord<>("order.event", orderCreatedEvent);
+        record.headers().add("X-Correlation-Id", UUID.randomUUID().toString().getBytes(StandardCharsets.UTF_8));
+
+        kafkaTemplate.send(record);
     }
 
     public void sendInValidEvent(){
@@ -36,6 +43,9 @@ public class kafkaEventProducerTest {
         orderCreatedEvent.setQuantity(1);
         orderCreatedEvent.setEmail("");
 
-        kafkaTemplate.send("order.event", orderCreatedEvent);
+        ProducerRecord<String, OrderCreatedEvent> record = new ProducerRecord<>("order.event", orderCreatedEvent);
+        record.headers().add("X-Correlation-Id", UUID.randomUUID().toString().getBytes(StandardCharsets.UTF_8));
+
+        kafkaTemplate.send(record);
     }
 }
