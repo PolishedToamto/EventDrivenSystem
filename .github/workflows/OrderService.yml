@@ -68,7 +68,7 @@ jobs:
         uses: aws-actions/amazon-ecr-login@v1
 
       - name: Build jar
-        run: mvn clean package -DskipTests
+        run: mvn -f OrderService/pom.xml clean package -DskipTests
 
       - name: Build, tag, and push image to Amazon ECR
         id: build-image
