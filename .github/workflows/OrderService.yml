@@ -31,6 +31,7 @@ on:
     branches: [ "main" ]
     paths:
       - "OrderService/**"
+      - ".github/workflows/OrderService.yml"
 env:
   AWS_REGION: us-east-1                   # set this to your preferred AWS region, e.g. us-west-1
   ECR_REPOSITORY: event-driven-system/order_service           # set this to your Amazon ECR repository name
