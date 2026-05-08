@@ -6,9 +6,19 @@ spring:
     name: order-service
 
   datasource:
-    url: ${DB_URL}
+    url: jdbc:aws-wrapper:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
+    driver-class-name: software.amazon.jdbc.Driver
+
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 2
+      max-lifetime: 840000
+
+      data-source-properties:
+        wrapperPlugins: iam
+        iamRegion: ${AWS_REGION}
 
   jpa:
     hibernate:
