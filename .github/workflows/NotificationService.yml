@@ -1,5 +1,5 @@
 
-name: Order Service CI/CD pipeline
+name: Notification Service CI/CD pipeline
 
 on:
   push:
@@ -10,7 +10,7 @@ on:
 env:
   AWS_REGION: us-east-1                   # set this to your preferred AWS region, e.g. us-west-1
   ECR_REPOSITORY: order-driven-system/notification-service
-
+  SERVICE_NAME: NotificationService
 permissions:
   id-token: write
   contents: read
@@ -43,7 +43,7 @@ jobs:
           cache: maven
 
       - name: Build jar
-        run: mvn -f OrderService/pom.xml clean verify
+        run: mvn -f $SERVICE_NAME/pom.xml clean verify
 
       - name: Build, tag, and push image to Amazon ECR
         id: build-image
@@ -54,5 +54,5 @@ jobs:
           # Build a docker container and
           # push it to ECR so that it can
           # be deployed to ECS.
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./NotificationService
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./$SERVICE_NAME
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
