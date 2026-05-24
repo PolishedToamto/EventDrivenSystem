@@ -29,7 +29,7 @@ public class NotificationEventListener {
         MDC.put("correlationId", correlationId);
 
         logger.info("Entering NotificationEventListener.sendNotification()");
-        logger.info("CorrelationId: " + correlationId);
+
 
         UserValidatedEvent event = record.value();
 
