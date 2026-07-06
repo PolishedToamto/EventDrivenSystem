@@ -1,6 +1,19 @@
 server:
   port: 8082
 spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/event_driven_order_system
+    username: deye
+    password: 123
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
   kafka:
     bootstrap-servers: localhost:9092
     consumer:
@@ -24,3 +37,7 @@ spring:
 logging:
   level:
     org.springframework.kafka: DEBUG
+
+jwt:
+  secret: ${JWT_secrect}
+  expiration-seconds: 3600
