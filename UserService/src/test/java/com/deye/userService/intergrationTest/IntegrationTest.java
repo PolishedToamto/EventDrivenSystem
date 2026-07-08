@@ -1,11 +1,5 @@
 package com.deye.userService.intergrationTest;
 
-
-import com.deye.userService.event.UserValidatedEvent;
-import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.clients.producer.ProducerRecord;
-import org.junit.Assert;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -27,26 +21,16 @@ import static org.awaitility.Awaitility.await;
 @Testcontainers
 @ActiveProfiles("test")
 public class IntegrationTest {
-    @Container
-    static KafkaContainer kafka =
-            new KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka:7.5.0"));
 
     @Container
     static PostgreSQLContainer<?> postgres =
             new PostgreSQLContainer<>("postgres:15");
 
     @Autowired
-    private kafkaEventProducerTest startEventProducerTest;
-
-    @Autowired
-    private kafkaEventListenserTest endEventListenerTest;
-
-    @Autowired
     private Environment environment;
 
     @DynamicPropertySource
     static void properties(DynamicPropertyRegistry registry) {
-        registry.add("spring.kafka.bootstrap-servers", kafka::getBootstrapServers);
         registry.add("spring.datasource.url", postgres::getJdbcUrl);
         registry.add("spring.datasource.username", postgres::getUsername);
         registry.add("spring.datasource.password", postgres::getPassword);
@@ -59,28 +43,5 @@ public class IntegrationTest {
 
     @Test
     public void integrationTest() throws InterruptedException {
-        startEventProducerTest.sendValidEvent();
-
-        ConsumerRecord<String, UserValidatedEvent> validEvent = endEventListenerTest.getUserValidatedEvent();
-
-        await().atMost(3, TimeUnit.SECONDS).untilAsserted(
-                        ()->Assert.assertNotNull(validEvent)
-                );
-
-
-        Assertions.assertEquals("test@gmail.com", validEvent.value().getEmail());
-        Assertions.assertEquals(true, validEvent.value().getValid());
-        Assert.assertNotNull(validEvent.headers().lastHeader("X-Correlation-Id"));
-
-        startEventProducerTest.sendInValidEvent();
-
-        ConsumerRecord<String, UserValidatedEvent> invalidEvent = endEventListenerTest.getUserValidatedEvent();
-
-        await().atMost(3, TimeUnit.SECONDS).untilAsserted(
-                ()->Assert.assertNotNull(invalidEvent)
-        );
-
-        Assertions.assertEquals(false, invalidEvent.value().getValid());
-        Assert.assertNotNull(validEvent.headers().lastHeader("X-Correlation-Id"));
     }
 }

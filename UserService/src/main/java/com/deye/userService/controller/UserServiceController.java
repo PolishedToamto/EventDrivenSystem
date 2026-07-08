@@ -11,6 +11,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,12 +29,10 @@ public class UserServiceController {
     private static final String ENTER_MESSAGE = "Entering " + CLASS_NAME;
     private static final String EXIT_MESSAGE = "Exiting " + CLASS_NAME;
 
-    private UserService userService;
-    private UserMapper userMapper;
+    private final UserService userService;
 
     public UserServiceController(UserService userService) {
         this.userService = userService;
-        this.userMapper = userMapper;
     }
 
     @GetMapping("/{id}")
@@ -47,20 +48,30 @@ public class UserServiceController {
     }
 
     @PostMapping("/register")
-    public UserDto createUser(@RequestBody UserDto user){
+    public ResponseEntity<UserDto> createUser(@RequestBody UserDto user){
         String methodName = ".createUser()";
         String correlationId = UUID.randomUUID().toString();
         MDC.put("correlationId", correlationId);
 
         logger.info(ENTER_MESSAGE + methodName);
 
+        UserDto dto = userService.createUser(user);
+
+
         logger.info(EXIT_MESSAGE + methodName);
 
-        return userService.createUser(user);
+        return ResponseEntity.status(HttpStatus.CREATED).body(dto);
     }
 
     @PostMapping("/auth/login")
-    public LoginResponse login(@RequestBody LoginRequest request){
-        return userService.login(request);
+    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request){
+        String methodName = ".login()";
+        logger.info("{}{}", ENTER_MESSAGE, methodName);
+        MDC.put("correlationId", UUID.randomUUID().toString());
+
+        LoginResponse response = userService.login(request);
+
+        logger.info(EXIT_MESSAGE + methodName);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 }

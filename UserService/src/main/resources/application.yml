@@ -39,5 +39,5 @@ logging:
     org.springframework.kafka: DEBUG
 
 jwt:
-  secret: ${JWT_secrect}
+  secret: L2dG4Y7mC6xN9qR8tK3pV5sA1bE0uWzFjHnQ4rY6mD8cP2xT
   expiration-seconds: 3600
