@@ -9,7 +9,6 @@ import com.deye.userService.exception.UserAlreadyExist;
 import com.deye.userService.exception.WrongEmailOrPassword;
 import com.deye.userService.repository.UserRepository;
 import com.deye.userService.util.CommonUtil;
-import org.apache.kafka.common.security.auth.Login;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
