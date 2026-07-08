@@ -47,7 +47,7 @@ class UserServiceControllerTest {
                         "userPassword" : "123Abc@"
                         }
                         """))
-                    .andExpect(status().isOk())
+                    .andExpect(status().isCreated())
                     .andExpect(jsonPath("$.userName").value(user1.getUserName()))
                     .andExpect(jsonPath("$.email").value(user1.getEmail()));
         }

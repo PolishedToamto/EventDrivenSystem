@@ -22,7 +22,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @AutoConfigureTestRestTemplate
 @Testcontainers
 @ActiveProfiles("test")
-public class IntegrationTest {
+public class UserServiceIntegrationTest {
 
     @Container
     static PostgreSQLContainer<?> postgres =
