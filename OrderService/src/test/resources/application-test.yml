@@ -23,3 +23,7 @@ spring:
       properties:
         spring.json.trusted.packages: "*"
         spring.json.add.type.headers: true
+
+jwt:
+  secret: L2dG4Y7mC6xN9qR8tK3pV5sA1bE0uWzFjHnQ4rY6mD8cP2xT
+  expiration-seconds: 3600
