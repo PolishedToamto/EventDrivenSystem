@@ -2,9 +2,13 @@ package com.Deye.OrderService.unitTest;
 
 import com.Deye.OrderService.controller.OrderController;
 import com.Deye.OrderService.entity.Order;
+import com.Deye.OrderService.secruity.JwtAuthenticationFilter;
+import com.Deye.OrderService.service.CustomUserDetailService;
+import com.Deye.OrderService.service.JwtService;
 import com.Deye.OrderService.service.OrderService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
@@ -22,12 +26,23 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(OrderController.class)
+@AutoConfigureMockMvc(addFilters = false)
 public class OrderControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
     @MockitoBean
     private OrderService orderService;
+
+    //following bean from secruity filter need to mock, each addFilters is disable, spring context still need these beans
+    @MockitoBean
+    private JwtService jwtService;
+
+    @MockitoBean
+    private CustomUserDetailService customUserDetailService;
+
+    @MockitoBean
+    private JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @Test
     public void getOrderById() throws Exception {

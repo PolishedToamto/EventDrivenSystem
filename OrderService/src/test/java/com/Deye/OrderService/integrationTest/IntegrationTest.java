@@ -1,9 +1,15 @@
 package com.Deye.OrderService.integrationTest;
 
+import com.Deye.OrderService.config.SecurityConfig;
 import com.Deye.OrderService.dto.OrderRequest;
 import com.Deye.OrderService.entity.Order;
+import com.Deye.OrderService.entity.User;
 import com.Deye.OrderService.event.OrderCreatedEvent;
 import com.Deye.OrderService.repository.OrderRepository;
+import com.Deye.OrderService.repository.UserRepository;
+import com.Deye.OrderService.secruity.JwtAuthenticationFilter;
+import com.Deye.OrderService.service.CustomUserDetailService;
+import com.Deye.OrderService.service.JwtService;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -12,8 +18,7 @@ import org.springframework.boot.resttestclient.TestRestTemplate;
 import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureTestRestTemplate;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.env.Environment;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -24,6 +29,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -51,6 +57,21 @@ public class IntegrationTest {
     private TestKafkaListener kafkaListener;
 
     @Autowired
+    JwtService jwtService;
+
+    @Autowired
+    JwtAuthenticationFilter jwtAuthenticationFilter;
+
+    @Autowired
+    CustomUserDetailService customUserDetailService;
+
+    @Autowired
+    SecurityConfig securityConfig;
+
+    @Autowired
+    UserRepository userRepository;
+
+    @Autowired
     Environment env;
 
     @Test
@@ -70,7 +91,33 @@ public class IntegrationTest {
     }
 
     @Test
+    void unAuthorizedRequestTest() {
+        HttpEntity<Order> httpEntity = new HttpEntity<>(new Order());
+        httpEntity.getHeaders().add(HttpHeaders.AUTHORIZATION, "123");
+
+        ResponseEntity<Order> response = restTemplate.postForEntity("/orders", httpEntity, Order.class);
+
+        Assertions.assertEquals(response.getStatusCode(), HttpStatus.UNAUTHORIZED);
+
+        HttpEntity<String> httpEntity1 = new HttpEntity<>(new String());
+        httpEntity1.getHeaders().add(HttpHeaders.AUTHORIZATION, "123");
+
+        ResponseEntity<String> response1 = restTemplate.postForEntity("/orders/{id}", httpEntity1, String.class, 1);
+        Assertions.assertEquals(response1.getStatusCode(), HttpStatus.UNAUTHORIZED);
+    }
+
+    @Test
     public void createOrderIntegrationTest() throws InterruptedException {
+        User user = new User();
+
+        user.setId(99);
+        user.setUserName("test");
+        user.setEmail("test@gmail.com");
+        user.setCreatedAt(LocalDate.now());
+        user.setPasswordHash("123");
+
+        String token = jwtService.generateAccessToken(user);
+
         OrderRequest orderRequest = new OrderRequest();
         orderRequest.setUserId(0);
         orderRequest.setProductName("testProduct");
@@ -78,7 +125,10 @@ public class IntegrationTest {
         orderRequest.setPrice(new BigDecimal("15.99"));
         orderRequest.setEmail("test@gmail.com");
 
-        ResponseEntity<com.Deye.OrderService.entity.Order> response = restTemplate.postForEntity("/orders", orderRequest, Order.class);
+        HttpEntity<OrderRequest> httpEntity = new HttpEntity<>(orderRequest);
+        httpEntity.getHeaders().add(HttpHeaders.AUTHORIZATION, token);
+
+        ResponseEntity<com.Deye.OrderService.entity.Order> response = restTemplate.postForEntity("/orders", httpEntity, Order.class);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
 
@@ -102,6 +152,16 @@ public class IntegrationTest {
 
     @Test
     public void getOrderByIdIntegrationTest(){
+        User user = new User();
+
+        user.setId(99);
+        user.setUserName("test");
+        user.setEmail("test@gmail.com");
+        user.setCreatedAt(LocalDate.now());
+        user.setPasswordHash("123");
+
+        String token = jwtService.generateAccessToken(user);
+
         OrderRequest orderRequest = new OrderRequest();
         orderRequest.setUserId(0);
         orderRequest.setProductName("testProduct");
@@ -109,11 +169,15 @@ public class IntegrationTest {
         orderRequest.setPrice(new BigDecimal("15.99"));
         orderRequest.setEmail("test@gmail.com");
 
-        ResponseEntity<Order> response1 = restTemplate.postForEntity("/orders", orderRequest, Order.class);
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add(HttpHeaders.AUTHORIZATION, token);
+
+        HttpEntity<OrderRequest> httpEntity = new HttpEntity<>(orderRequest, httpHeaders);
+
+        ResponseEntity<Order> response1 = restTemplate.postForEntity("/orders", httpEntity, Order.class);
 
         //since springBootTest is running on random port, can't hard code the path
-        ResponseEntity<Order> response = restTemplate.getForEntity("/orders/{id}", Order.class, 1);
-
+        ResponseEntity<Order> response = restTemplate.exchange("/orders/{id}",  HttpMethod.GET, httpEntity, Order.class, 1);
         Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
 
         //the first primary key is 1

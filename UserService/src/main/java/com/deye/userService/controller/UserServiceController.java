@@ -44,6 +44,9 @@ public class UserServiceController {
         logger.info(ENTER_MESSAGE + methodName);
 
         logger.info(EXIT_MESSAGE + methodName);
+
+        MDC.clear();
+
         return userService.getUserNameById(id);
     }
 
@@ -57,8 +60,8 @@ public class UserServiceController {
 
         UserDto dto = userService.createUser(user);
 
-
         logger.info(EXIT_MESSAGE + methodName);
+        MDC.clear();
 
         return ResponseEntity.status(HttpStatus.CREATED).body(dto);
     }
@@ -72,6 +75,8 @@ public class UserServiceController {
         LoginResponse response = userService.login(request);
 
         logger.info(EXIT_MESSAGE + methodName);
+        MDC.clear();
+
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 }

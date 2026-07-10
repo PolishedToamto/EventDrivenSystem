@@ -25,5 +25,5 @@ spring:
         spring.json.add.type.headers: true
 
 jwt:
-  secret: L2dG4Y7mC6xN9qR8tK3pV5sA1bE0uWzFjHnQ4rY6mD8cP2xT
+  secret: 22FN/K06QIhwODqV5ReoZx79Tdl+DPruB99uKIlhPNyIVo2q+WPCcmmmGfpZoAr5368fpDradpQEug/NbH6Ffg==
   expiration-seconds: 3600
