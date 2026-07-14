@@ -48,8 +48,6 @@ public class SecurityConfig {
                         })
                 )
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.POST,"/orders").permitAll()
-                        .requestMatchers(HttpMethod.GET,"/orders/{id}").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(

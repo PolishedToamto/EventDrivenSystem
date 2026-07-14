@@ -12,6 +12,7 @@ import com.Deye.OrderService.service.CustomUserDetailService;
 import com.Deye.OrderService.service.JwtService;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.resttestclient.TestRestTemplate;
@@ -19,6 +20,7 @@ import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureTestRe
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.env.Environment;
 import org.springframework.http.*;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -74,6 +76,16 @@ public class IntegrationTest {
     @Autowired
     Environment env;
 
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+
+    @BeforeEach
+    void cleanDatabase() {
+        jdbcTemplate.execute("""
+        TRUNCATE TABLE orders, users RESTART IDENTITY CASCADE
+        """);
+    }
+
     @Test
     void debug() {
         //testing if application-test yml is loaded
@@ -110,23 +122,25 @@ public class IntegrationTest {
     public void createOrderIntegrationTest() throws InterruptedException {
         User user = new User();
 
-        user.setId(99);
-        user.setUserName("test");
-        user.setEmail("test@gmail.com");
+        user.setUserName("admin");
+        user.setEmail("dleipersonal@gmail.com");
         user.setCreatedAt(LocalDate.now());
         user.setPasswordHash("123");
+
+        userRepository.save(user);//create one user
 
         String token = jwtService.generateAccessToken(user);
 
         OrderRequest orderRequest = new OrderRequest();
-        orderRequest.setUserId(0);
+        orderRequest.setUserId(user.getId());
         orderRequest.setProductName("testProduct");
         orderRequest.setQuantity(1);
         orderRequest.setPrice(new BigDecimal("15.99"));
         orderRequest.setEmail("test@gmail.com");
 
-        HttpEntity<OrderRequest> httpEntity = new HttpEntity<>(orderRequest);
-        httpEntity.getHeaders().add(HttpHeaders.AUTHORIZATION, token);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(token);
+        HttpEntity<OrderRequest> httpEntity = new HttpEntity<>(orderRequest, headers);
 
         ResponseEntity<com.Deye.OrderService.entity.Order> response = restTemplate.postForEntity("/orders", httpEntity, Order.class);
 
@@ -154,26 +168,28 @@ public class IntegrationTest {
     public void getOrderByIdIntegrationTest(){
         User user = new User();
 
-        user.setId(99);
         user.setUserName("test");
         user.setEmail("test@gmail.com");
         user.setCreatedAt(LocalDate.now());
         user.setPasswordHash("123");
 
+       User savedUser = userRepository.save(user);
+
         String token = jwtService.generateAccessToken(user);
 
         OrderRequest orderRequest = new OrderRequest();
-        orderRequest.setUserId(0);
+        orderRequest.setUserId(savedUser.getId());
         orderRequest.setProductName("testProduct");
         orderRequest.setQuantity(1);
         orderRequest.setPrice(new BigDecimal("15.99"));
         orderRequest.setEmail("test@gmail.com");
 
         HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.add(HttpHeaders.AUTHORIZATION, token);
+        httpHeaders.setBearerAuth(token);
 
         HttpEntity<OrderRequest> httpEntity = new HttpEntity<>(orderRequest, httpHeaders);
 
+        //create order
         ResponseEntity<Order> response1 = restTemplate.postForEntity("/orders", httpEntity, Order.class);
 
         //since springBootTest is running on random port, can't hard code the path
@@ -181,6 +197,6 @@ public class IntegrationTest {
         Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
 
         //the first primary key is 1
-        Assertions.assertEquals(1, response.getBody().getOrderId());
+        Assertions.assertEquals(response1.getBody().getOrderId(), response.getBody().getOrderId());
     }
 }
